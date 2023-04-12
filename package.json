@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "@ganache/console.log": "^0.3.0",
+    "@openzeppelin/contracts": "^4.8.2",
+    "@truffle/hdwallet-provider": "^2.1.8",
+    "debug": "^4.3.4",
+    "dotenv": "^16.0.3"
+  },
+  "name": "ethernaut-hacks",
+  "version": "1.0.0",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
