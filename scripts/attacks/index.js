@@ -1,6 +1,9 @@
 // Import all files within the attacks directory
 
 const fallback = require('./1_fallback');
+const fallout = require('./2_fallout');
+const coinflip = require('./3_coinflip');
+const gateKeeperOne = require('./13_gatekeeper_one');
 const gateKeeperTwo = require('./14_gatekeeper_two');
 const naughtCoin = require('./15_naught_coin');
 const preservation = require('./16_preservation');
@@ -19,6 +22,9 @@ const gateKeeperThree = require('./28_gatekeeper_three');
 
 module.exports = {
   'Fallback': fallback,
+  'Fallout': fallout,
+  'Coin Flip': coinflip,
+  'Gatekeeper One': gateKeeperOne,
   'Gatekeeper Two': gateKeeperTwo,
   'Naught Coin': naughtCoin,
   'Preservation': preservation,

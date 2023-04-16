@@ -1,10 +1,11 @@
 const debug = require('debug')('ethernaut');
+const { ethers } = require('hardhat');
+const config = require('../config/ethernaut.sepolia');
 
 const ethernautABI = [
   {
     name: 'createLevelInstance',
     type: 'function',
-    stateMutability: 'payable',
     inputs: [
       {
         type: 'address',
@@ -15,7 +16,6 @@ const ethernautABI = [
   {
     name: 'submitLevelInstance',
     type: 'function',
-    stateMutability: 'nonpayable',
     inputs: [
       {
         type: 'address',
@@ -34,8 +34,11 @@ const ethernautABI = [
   }
 ];
 
-module.exports = function(ethers, config, level) {
+// const provider = new ethers.providers.JsonRpcProvider();
+
+module.exports = function() {
   let accounts;
+
   async function getSenderAddress(accountIdx = 0) {
     if (!accounts) {
       accounts = await ethers.getSigners();
@@ -44,28 +47,33 @@ module.exports = function(ethers, config, level) {
     return accounts[accountIdx];
   }
   
-  async function createInstance(options = {}) {
+  async function createInstance(levelId, options = {}) {
+    const level = config.levels.find(lvl => lvl.name === levelId).deployedAddress;
     const contract = await getContract(config.ethernautAddress, ethernautABI);
-    const receipt = await contract.createLevelInstance(level.deployedAddress, { ...options })
-      .then(tx => tx.wait());
-
+    const receipt = await contract.methods.createLevelInstance(level).send({
+      from: await getSenderAddress(),
+      ...options
+    });
+  
     debug('createLevelInstance TX', receipt);
-
-    return receipt.events?.find(event => event.event === 'LevelInstanceCreatedLog')?.args.instance;
+  
+    return receipt.events.LevelInstanceCreatedLog.returnValues.instance;
   }
   
-  async function submitInstance(instanceAddress, options = {}) {
+  async function submitInstance(instance, options = {}) {
     const contract = await getContract(config.ethernautAddress, ethernautABI);
-    const response = await contract.submitLevelInstance(instanceAddress, { ...options });
-    const receipt = await response.wait();
-
+    const receipt = await contract.methods.submitLevelInstance(instance).send({
+      from: await getSenderAddress(),
+      ...options
+    });
+  
     debug('submitLevelInstance TX', receipt);
   
     return receipt.status;
   }
   
   async function getContract(address, abi) {
-    const from = await getSenderAddress();
+    const from = await getSenderAddress(web3);
     return new ethers.Contract(address, abi, from);
   }
 
